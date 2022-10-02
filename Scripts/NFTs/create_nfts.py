@@ -1,13 +1,13 @@
 #!python
 
-import os
-import sys
-import json
-import time
-import random
-from PIL import Image
-from dotenv import load_dotenv
 from progress_bar import progressbar
+from dotenv import load_dotenv
+from PIL import Image
+import random
+import time
+import json
+import sys
+import os
 
 load_dotenv()
 
