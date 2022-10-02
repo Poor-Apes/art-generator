@@ -28,7 +28,7 @@ def getNFTWithPath(nft_number):
     return os.path.join(ipfs_path, "NFTs", "Genesis", str(nft_number) + ".png")
 
 
-def getIPFSCardsPath(card_number):
+def getIPFSCardsGenesisPath():
     return os.path.join(ipfs_path, "Cards", "Genesis")
 
 
@@ -51,8 +51,8 @@ rock_salt_70 = ImageFont.truetype(font=rock_salt, size=70)
 typewriter_80 = ImageFont.truetype(font=typewriter, size=80)
 
 
-def delete_old_cards():
-    for file in os.scandir(nfts_path):
+def delete_old_genesis_cards():
+    for file in os.scandir(getIPFSCardsGenesisPath()):
         if file.name.endswith(".png"):
             os.unlink(file.path)
 

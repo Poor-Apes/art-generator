@@ -1,5 +1,6 @@
 #!python
 
+from create_cards import create_genesis_card, delete_old_genesis_cards
 from progress_bar import progressbar
 from dotenv import load_dotenv
 from PIL import Image
@@ -69,17 +70,14 @@ for file in os.scandir(json_files_path):
     if file.name.endswith(".json"):
         os.unlink(file.path)
 
+delete_old_genesis_cards()
+
 # Setup a file array so we can reference traits
 
 for category in categories:
     items.append([])
     for category_num in range(0,10):
         items[len(items)-1].append(Image.open(images_path + "/" + category + "/" + category + "_" +str(category_num) + ".png"))
-'''
-items.append([])
-for bg_num in range(0,10):
-    items[len(items)-1].append(Image.open(images_path + "/background/bg_" + str(bg_num) + ".png"))
-'''
 
 # Create an arrary of all unique NFT traits
 
@@ -111,6 +109,15 @@ for current_nft in progressbar(total_nfts, "Generating NFTs: ", 40):
         traits[categories[i]] = current_nft[i]
     image_path_and_filename = nfts_path + "/" + str(nft_number) + ".png"
     nft_image.save(image_path_and_filename)
+    # create a card
+    create_genesis_card(
+        ape_number=nft_number,
+        location_number=traits["background"],
+        clothes_number=traits["clothes"],
+        head_number=traits["head"],
+        eyes_number=traits["eyes"],
+        mouth_number=traits["mouth"]
+    )
     # Create NFTs traits list for manifest
     manifest.append(traits)
     nft_number += 1
