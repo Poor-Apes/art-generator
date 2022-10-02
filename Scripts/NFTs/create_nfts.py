@@ -27,7 +27,7 @@ if len(sys.argv) == 1 or len(sys.argv) > 2 and sys.argv[1] not in ["genesis", "s
 season = sys.argv[1]
 
 current_wd = os.path.dirname(os.path.realpath(__file__))
-images_path = os.path.join(current_wd, os.path.join("..", "..", "Drawings"))
+images_path = os.path.join(current_wd, os.path.join("..", "..", "Assets", "Drawings"))
 ipfs_folder_path = os.path.join(current_wd, os.path.join("..", "..", "IPFS"))
 json_folder_path = os.path.join(ipfs_folder_path, os.path.join("JSON"))
 bkground = Image.open(os.path.join(images_path, "test_card.png"))
