@@ -1,6 +1,6 @@
 #!python
 
-from create_cards import create_genesis_card, delete_old_genesis_cards
+from card import create_genesis_card, delete_old_genesis_cards
 from progress_bar import progressbar
 from dotenv import load_dotenv
 from PIL import Image
