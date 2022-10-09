@@ -7,7 +7,7 @@ import os
 load_dotenv()
 
 card_size = (566, 943)
-background_colour = "#7e6254"
+background_colours = ["966a64", "7e6254", "616b63", "89815a"]
 nft_scale = 0.235
 assets_scale = 0.225
 
@@ -19,21 +19,44 @@ assets_path = os.path.join(project_base_path, "Assets")
 def getAssetsFontPath(font_name):
     return os.path.join(assets_path, "Fonts", font_name + ".ttf")
 
-
-def getAssetsCardPath(image_full_name):
-    return os.path.join(assets_path, "Cards", "Front", image_full_name + ".png")
-
-
 def getNFTWithPath(nft_number):
     return os.path.join(ipfs_path, "NFTs", "Genesis", str(nft_number) + ".png")
 
+# Assets
 
-def getIPFSCardsGenesisPath():
-    return os.path.join(ipfs_path, "Cards", "Genesis")
+def getAssetsCardPath():
+    return os.path.join(assets_path, "Cards")
 
+def getAssetsCardRootPath(direction, image_name):
+    return os.path.join(getAssetsCardPath(), direction, image_name + ".png")
 
-def getCardsPath(card_number):
-    return os.path.join(ipfs_path, "Cards", "Genesis", str(card_number) + ".png")
+def getAssetsCardFrontPath(image_name):
+    return getAssetsCardRootPath("Front", image_name)
+
+def getAssetsCardBackPath(image_name):
+    return getAssetsCardRootPath("Back", image_name)
+
+# IPFS
+
+def getIPFSCardsPath(direction):
+    return os.path.join(ipfs_path, "Cards", "Genesis", direction)
+
+def getIPFSCardsFrontPath():
+    return getIPFSCardsPath("Front")
+
+def getIPFSCardsBackPath():
+    return getIPFSCardsPath("Back")
+
+# Card Path (Save)
+
+def getCardsPath(direction, card_number):
+    return os.path.join(ipfs_path, "Cards", "Genesis", direction, str(card_number) + ".png")
+
+def getCardsFrontPath(card_number):
+    return getCardsPath("Front", card_number)
+
+def getCardsBackPath(card_number):
+    return getCardsPath("Back", card_number)
 
 
 gravitas_one = getAssetsFontPath("GravitasOne-Regular")
@@ -49,37 +72,97 @@ rock_salt_60 = ImageFont.truetype(font=rock_salt, size=60)
 # rock_salt_60.set_variation_by_name("Bold")
 rock_salt_70 = ImageFont.truetype(font=rock_salt, size=70)
 typewriter_80 = ImageFont.truetype(font=typewriter, size=80)
+typewriter_200 = ImageFont.truetype(font=typewriter, size=200)
 
 
-def delete_old_genesis_cards():
-    for file in os.scandir(getIPFSCardsGenesisPath()):
+def delete_old_cards():
+    for file in os.scandir(getIPFSCardsFrontPath()):
+        if file.name.endswith(".png"):
+            os.unlink(file.path)
+    for file in os.scandir(getIPFSCardsBackPath()):
         if file.name.endswith(".png"):
             os.unlink(file.path)
 
-def create_genesis_card(
-    nft_image, ape_number, score_number, background_number, clothes_number, head_number, eyes_number, mouth_number
+
+def create_card(
+    nft_image,
+    ape_number,
+    score_number,
+    background_number,
+    clothes_number,
+    head_number,
+    eyes_number,
+    mouth_number,
 ):
 
-    card = Image.new("RGB", card_size, color=background_colour)
+    ape_number += 1
+
+    card_front(
+        nft_image,
+        ape_number,
+        score_number,
+        background_number,
+        clothes_number,
+        head_number,
+        eyes_number,
+        mouth_number,
+    )
+
+    card_back(ape_number, background_number)
+
+
+def card_back(ape_number, background_number):
+    card_base = Image.new("RGBA", card_size, color="#"+background_colours[background_number])
+    border_and_text = Image.open(os.path.join(getAssetsCardBackPath("card_back")))
+    border_nad_text_scalled = ImageOps.scale(border_and_text, assets_scale).resize(card_size)
+    card = Image.alpha_composite(card_base, border_nad_text_scalled)
+
+    ape_number_card = Image.new("RGBA", card_size, color="black")
+    white_background = Image.new("RGBA", card_size, color="white")
+    drawable_image = ImageDraw.Draw(ape_number_card)
+    _, _, w, h = drawable_image.textbbox((0, 0), str(ape_number), font=typewriter_200)
+    drawable_image.text(((card_size[0]-w)/2, 650), str(ape_number), fill=(35,35,35,255), font=typewriter_200)
+
+    r, g, b, a = ape_number_card.split()
+    ape_number_card_recombined = Image.merge("RGBA", (g, g, b, r))
+    # 6. Paset it onto the card
+    card.paste(white_background, (0, 0), ape_number_card_recombined)
+
+    cut_the_corners_off(card)
+    card.save(getCardsBackPath(ape_number - 1))
+
+
+def card_front(
+    nft_image,
+    ape_number,
+    score_number,
+    background_number,
+    clothes_number,
+    head_number,
+    eyes_number,
+    mouth_number,
+):
+
+    card = Image.new("RGB", card_size, color="#" + background_colours[background_number])
 
     # NFT
 
-    #nft_image = Image.open(getNFTWithPath(ape_number))
+    # nft_image = Image.open(getNFTWithPath(ape_number))
 
     nft_image_scaled = ImageOps.scale(nft_image, nft_scale)
 
     card.paste(nft_image_scaled, (-80, 0))
 
-    add_borders(card)
+    card_front_add_borders(card)
 
     # Registration Card
 
-    registration_card = Image.open(getAssetsCardPath("registration_card"))
+    registration_card = Image.open(getAssetsCardFrontPath("registration_card"))
 
     drawable_image = ImageDraw.Draw(registration_card)
 
     # Create the details on the card
-    card_details(
+    card_front_details(
         drawable_image,
         score_number,
         background_number,
@@ -89,9 +172,9 @@ def create_genesis_card(
         mouth_number,
     )
 
-    create_drop_shadow(card, registration_card)
+    card_front_drop_shadow(card, registration_card)
 
-    reg_card_colour, reg_card_alpha = create_reg_card_colour_and_alpha(
+    reg_card_colour, reg_card_alpha = card_front_reg_card_colour_and_alpha(
         registration_card
     )
 
@@ -99,14 +182,14 @@ def create_genesis_card(
 
     cut_the_corners_off(card)
 
-    card.save(getCardsPath(ape_number))
+    card.save(getCardsFrontPath(ape_number - 1))
 
 
-def add_borders(card):
-    borders = Image.open(getAssetsCardPath("borders"))
+def card_front_add_borders(card):
+    borders = Image.open(getAssetsCardFrontPath("borders"))
     borders_scaled = ImageOps.scale(borders, assets_scale)
 
-    borders_alpha = Image.open(getAssetsCardPath("borders_alpha"))
+    borders_alpha = Image.open(getAssetsCardFrontPath("borders_alpha"))
     borders_alpha_scaled = ImageOps.scale(borders_alpha, assets_scale)
     r, g, b, a = borders_alpha_scaled.split()
     borders_alpha_recombined = Image.merge("RGBA", (r, g, b, r))
@@ -114,7 +197,7 @@ def add_borders(card):
     card.paste(borders_scaled, (0, 0), borders_alpha_recombined)
 
 
-def card_details(
+def card_front_details(
     drawable_image,
     score_number,
     background_number,
@@ -196,7 +279,7 @@ def card_details(
     )
 
 
-def create_drop_shadow(card, registration_card):
+def card_front_drop_shadow(card, registration_card):
     # 1. Create a slate for the drop shadow
     blank_slate_drop_shadow = Image.new("RGB", card_size, color="black")
     # 2. Use the reg card commands
@@ -209,14 +292,14 @@ def create_drop_shadow(card, registration_card):
     blank_slate_drop_shadow_blur = blank_slate_drop_shadow.filter(
         ImageFilter.GaussianBlur(15)
     )
-    # 5. Set the alph to the colors
+    # 5. Set the alpha to the colors
     r, g, b = blank_slate_drop_shadow_blur.split()
     blank_slate_drop_shadow_recombined = Image.merge("RGBA", (r, g, b, r))
     # 6. Paset it onto the card
     card.paste(blank_slate_drop_shadow, (0, 0), blank_slate_drop_shadow_recombined)
 
 
-def create_reg_card_colour_and_alpha(registration_card):
+def card_front_reg_card_colour_and_alpha(registration_card):
     reg_card_scaled = ImageOps.scale(registration_card, assets_scale)
     reg_card_rotated = reg_card_scaled.rotate(
         5, resample=3, expand=1, fillcolor="#fdfbc0"
@@ -244,7 +327,7 @@ def create_reg_card_colour_and_alpha(registration_card):
 
 def cut_the_corners_off(card):
     corners_colour = Image.new("RGB", card_size, color="black")
-    corners_alpha = Image.open(getAssetsCardPath("corners_alpha"))
+    corners_alpha = Image.open(os.path.join(getAssetsCardPath(), "corners_alpha.png"))
     corners_alpha_scaled = ImageOps.scale(corners_alpha, assets_scale).resize(card_size)
     r, g, b, a = corners_alpha_scaled.split()
     corners_alpha_recombined = Image.merge("RGBA", (r, g, b, r))
