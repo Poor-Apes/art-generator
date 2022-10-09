@@ -57,14 +57,14 @@ def delete_old_genesis_cards():
             os.unlink(file.path)
 
 def create_genesis_card(
-    ape_number, location_number, clothes_number, head_number, eyes_number, mouth_number
+    nft_image, ape_number, score_number, background_number, clothes_number, head_number, eyes_number, mouth_number
 ):
 
     card = Image.new("RGB", card_size, color=background_colour)
 
     # NFT
 
-    nft_image = Image.open(getNFTWithPath(ape_number))
+    #nft_image = Image.open(getNFTWithPath(ape_number))
 
     nft_image_scaled = ImageOps.scale(nft_image, nft_scale)
 
@@ -81,8 +81,8 @@ def create_genesis_card(
     # Create the details on the card
     card_details(
         drawable_image,
-        ape_number,
-        location_number,
+        score_number,
+        background_number,
         clothes_number,
         head_number,
         eyes_number,
@@ -116,8 +116,8 @@ def add_borders(card):
 
 def card_details(
     drawable_image,
-    ape_number,
-    location_number,
+    score_number,
+    background_number,
     clothes_number,
     head_number,
     eyes_number,
@@ -126,7 +126,7 @@ def card_details(
     # NFT Number
     drawable_image.text(
         (240, 240),
-        str(ape_number + 1).rjust(3, " "),
+        str(score_number + 1).rjust(3, " "),
         fill=gravitas_one_colour,
         font=gravitas_one_100,
     )
@@ -158,7 +158,7 @@ def card_details(
     # Local
     drawable_image.text(
         (120, 717),
-        "LOCATION: " + os.getenv("BACKGROUND_" + str(location_number)),
+        "LOCATION: " + os.getenv("BACKGROUND_" + str(background_number)),
         fill=typewriter_colour,
         font=typewriter_80,
     )

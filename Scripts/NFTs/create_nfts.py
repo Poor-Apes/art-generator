@@ -30,8 +30,8 @@ current_wd = os.path.dirname(os.path.realpath(__file__))
 images_path = os.path.join(current_wd, os.path.join("..", "..", "Assets", "Drawings"))
 ipfs_folder_path = os.path.join(current_wd, os.path.join("..", "..", "IPFS"))
 json_folder_path = os.path.join(ipfs_folder_path, os.path.join("JSON"))
-bkground = Image.open(os.path.join(images_path, "test_card.png"))
-categories = ['head', 'eyes', 'mouth', 'clothes', 'background']
+base_ape = Image.open(os.path.join(images_path, "ape.png"))
+categories = ['background', 'clothes', 'head', 'eyes', 'mouth']
 nfts_attributes = []
 nfts_path = None
 json_files_path = None
@@ -81,13 +81,12 @@ for category in categories:
 
 # Create an arrary of all unique NFT traits
 
-for x in item_range:
-    for y in item_range:
-        for z in item_range:
-            for s in item_range:
-                for t in item_range:
-                    for bg in item_range:
-                        nfts_attributes.append([x,y,z,s,t,bg])
+for bg in item_range:
+    for cl in item_range:
+        for h in item_range:
+            for e in item_range:
+                for m in item_range:
+                    nfts_attributes.append([bg,cl,h,e,m])
 
 random.shuffle(nfts_attributes)
 
@@ -100,19 +99,30 @@ manifest = []
 
 for current_nft in progressbar(total_nfts, "Generating NFTs: ", 40):
     # Create the NFTs
-    nft_image = Image.new('RGBA',(bkground.size[0], bkground.size[1]), (255,255,255))
-    nft_image = Image.alpha_composite(nft_image, bkground)
+    nft_image = Image.new('RGBA', base_ape.size, (255,255,255,255))
     traits = {}
+    traits_score = 0;
     for i in range(0,len(categories)):
-        nft_image = Image.alpha_composite(nft_image, items[i][current_nft[i]])
-        #traits[categories[i]] = os.getenv(categories[i].upper() + "_" + str(i))
+        # background
+        if i == 0:
+            # start with the background
+            nft_image.paste(items[0][current_nft[0]])
+            # add the ape
+            nft_image = Image.alpha_composite(nft_image, base_ape)
+        else:
+            # layer the traits
+            nft_image = Image.alpha_composite(nft_image, items[i][current_nft[i]])
         traits[categories[i]] = current_nft[i]
+        traits_score += current_nft[i]
+    traits["score"] = 50 - traits_score
     image_path_and_filename = nfts_path + "/" + str(nft_number) + ".png"
     nft_image.save(image_path_and_filename)
     # create a card
     create_genesis_card(
+        nft_image=nft_image,
         ape_number=nft_number,
-        location_number=traits["background"],
+        score_number=traits["score"],
+        background_number=traits["background"],
         clothes_number=traits["clothes"],
         head_number=traits["head"],
         eyes_number=traits["eyes"],
