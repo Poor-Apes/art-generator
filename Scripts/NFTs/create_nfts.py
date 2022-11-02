@@ -40,7 +40,7 @@ images_path = os.path.join(current_wd, os.path.join("..", "..", "Assets", "Drawi
 ipfs_folder_path = os.path.join(current_wd, os.path.join("..", "..", "IPFS"))
 json_folder_path = os.path.join(ipfs_folder_path, os.path.join("JSON"))
 base_ape = Image.open(os.path.join(images_path, "ape.png"))
-categories = ["background", "clothes", "head", "eyes", "mouth"]
+categories = ["background", "clothes", "mouth", "eyes", "head"]
 nfts_attributes = []
 nfts_path = None
 json_files_path = None
@@ -49,7 +49,7 @@ item_range = []
 items = []
 
 if season == "genesis":
-    number_of_nfts = 3
+    number_of_nfts = 6
     item_range = [x for x in range(0, 4)]
     nfts_path = os.path.join(ipfs_folder_path, os.path.join("NFTs", "Genesis"))
     json_files_path = os.path.join(json_folder_path, os.path.join("Genesis"))
@@ -108,10 +108,10 @@ for category in categories:
 
 for bg in item_range:
     for cl in item_range:
-        for h in item_range:
+        for m in item_range:
             for e in item_range:
-                for m in item_range:
-                    nfts_attributes.append([bg, cl, h, e, m])
+                for h in item_range:
+                    nfts_attributes.append([bg, cl, m, e, h])
 
 random.shuffle(nfts_attributes)
 
@@ -141,8 +141,8 @@ for current_nft in progressbar(total_nfts, "Generating NFTs: ", 40):
         traits_score += current_nft[i]
     traits["score"] = 50 - traits_score
     image_path_and_filename = nfts_path + "/" + str(nft_number) + ".png"
-    nft_image.save(image_path_and_filename)
-    # create a card
+    nft_image_resized = nft_image.resize((1024,1024))
+    nft_image_resized.save(image_path_and_filename)
     create_genesis_card(
         nft_image=nft_image,
         ape_number=nft_number,
@@ -153,7 +153,6 @@ for current_nft in progressbar(total_nfts, "Generating NFTs: ", 40):
         eyes_number=traits["eyes"],
         mouth_number=traits["mouth"],
     )
-    # Create NFTs traits list for manifest
     manifest.append(traits)
     nft_number += 1
 
