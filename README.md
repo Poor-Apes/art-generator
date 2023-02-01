@@ -1,0 +1,19 @@
+```
+$ cd Scripts
+$ virtualenv -p python3 .venv
+$ source .venv/bin/activate
+$ (.venv) pip install -r requirments.txt
+...
+$ (.venv) cp .env.example .env
+$ (.venv) vim .env
+...
+$ (.venv) cd NFTs
+$ (.venv) ./create_nfts.py genesis
+...
+$ (.venv) ls ../../IPFS/NFTs/Genesis
+...
+$ (.venv) ls ../../IPFS/JSON/Genesis
+...
+$ (.venv) ls ../../IPFS/Cards/Genesis/Front
+...
+```
