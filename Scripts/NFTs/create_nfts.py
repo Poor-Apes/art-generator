@@ -23,11 +23,11 @@ if os.getenv("VIRTUAL_ENV") == None:
     )
     exit()
 
-if (
-    len(sys.argv) == 1
-    or len(sys.argv) > 2
-    and sys.argv[1] not in ["genesis", "second_season", "third_season"]
-):
+if len(sys.argv) != 2 and sys.argv[1] not in [
+    "genesis",
+    "second_season",
+    "third_season",
+]:
     print(
         "Please use the argument 'genesis', 'second_season' or 'third_season' to generate NFTs"
     )
@@ -49,7 +49,7 @@ item_range = []
 items = []
 
 if season == "genesis":
-    number_of_nfts = 6
+    number_of_nfts = 700
     item_range = [x for x in range(0, 4)]
     nfts_path = os.path.join(ipfs_folder_path, os.path.join("NFTs", "Genesis"))
     json_files_path = os.path.join(json_folder_path, os.path.join("Genesis"))
@@ -141,7 +141,7 @@ for current_nft in progressbar(total_nfts, "Generating NFTs: ", 40):
         traits_score += current_nft[i]
     traits["score"] = 50 - traits_score
     image_path_and_filename = nfts_path + "/" + str(nft_number) + ".png"
-    nft_image_resized = nft_image.resize((1024,1024))
+    nft_image_resized = nft_image.resize((1024, 1024))
     nft_image_resized.save(image_path_and_filename)
     create_genesis_card(
         nft_image=nft_image,
