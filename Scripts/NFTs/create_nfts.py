@@ -43,18 +43,42 @@ nfts_attributes = []
 nfts_path = None
 json_files_path = None
 number_of_nfts = 0
+chicago_nfts = 3
+new_york_nfts = 1700
+detroit_nfts = 2000
 item_range = []
 items = []
+names = []
+# for the Latin American name for the Detroit season
+names_2 = []
 
 if season == "chicago":
-    number_of_nfts = 5
+    number_of_nfts = chicago_nfts
     item_range = [x for x in range(0, 4)]
+    for first_name in range(50):
+        for last_name in range(50):
+            names.append([first_name, last_name])
+    random.shuffle(names)
 elif season == "new_york":
-    number_of_nfts = 1800
+    number_of_nfts = new_york_nfts
     item_range = [x for x in range(0, 7)]
+    for first_name in range(50):
+        for last_name in range(50):
+            names.append([first_name, last_name])
+    random.shuffle(names)
 elif season == "detroit":
-    number_of_nfts = 2100
+    number_of_nfts = detroit_nfts
     item_range = [x for x in range(4, 10)]
+    # Western names
+    for first_name in range(40):
+        for last_name in range(40):
+            names.append([first_name, last_name])
+    random.shuffle(names)
+    # Latin American names
+    for first_name in range(20):
+        for last_name in range(20):
+            names_2.append([first_name, last_name])
+    random.shuffle(names_2)
 else:
     exit(str(season) + " is not a season!")
 
@@ -79,7 +103,8 @@ for file in os.scandir(json_files_path):
     if file.name.endswith(".json"):
         os.unlink(file.path)
 
-delete_old_chicago_cards()
+if season == "chicago":
+    delete_old_chicago_cards()
 
 # Setup a file array so we can reference traits
 
