@@ -8,8 +8,8 @@ import random
 from PIL import Image
 from dotenv import load_dotenv
 from progress_bar import progressbar
-from card_genesis import create_card as create_genesis_card
-from card_genesis import delete_old_cards as delete_old_genesis_cards
+from card_chicago import create_card as create_chicago_card
+from card_chicago import delete_old_cards as delete_old_chicago_cards
 
 load_dotenv()
 
@@ -24,13 +24,11 @@ if os.getenv("VIRTUAL_ENV") == None:
     exit()
 
 if len(sys.argv) != 2 and sys.argv[1] not in [
-    "genesis",
-    "second_season",
-    "third_season",
+    "chicago",
+    "new_york",
+    "detroit",
 ]:
-    print(
-        "Please use the argument 'genesis', 'second_season' or 'third_season' to generate NFTs"
-    )
+    print("Please use the argument 'chicago', 'new_york' or 'detroit' to generate NFTs")
     exit()
 
 season = sys.argv[1]
@@ -48,23 +46,20 @@ number_of_nfts = 0
 item_range = []
 items = []
 
-if season == "genesis":
-    number_of_nfts = 1400
+if season == "chicago":
+    number_of_nfts = 5
     item_range = [x for x in range(0, 4)]
-    nfts_path = os.path.join(ipfs_folder_path, os.path.join("NFTs", "Genesis"))
-    json_files_path = os.path.join(json_folder_path, os.path.join("Genesis"))
-elif season == "second_season":
+elif season == "new_york":
     number_of_nfts = 1800
     item_range = [x for x in range(0, 7)]
-    nfts_path = os.path.join(ipfs_folder_path, os.path.join("NFTs", "2nd_Season"))
-    json_files_path = os.path.join(json_folder_path, os.path.join("2nd_Season"))
-elif season == "third_season":
+elif season == "detroit":
     number_of_nfts = 2100
     item_range = [x for x in range(4, 10)]
-    nfts_path = os.path.join(ipfs_folder_path, os.path.join("NFTs", "3rd_Season"))
-    json_files_path = os.path.join(json_folder_path, os.path.join("3rd_season"))
 else:
     exit(str(season) + " is not a season!")
+
+nfts_path = os.path.join(ipfs_folder_path, os.path.join("NFTs", season.title()))
+json_files_path = os.path.join(json_folder_path, os.path.join(season.title()))
 
 if (
     nfts_path == None
@@ -84,7 +79,7 @@ for file in os.scandir(json_files_path):
     if file.name.endswith(".json"):
         os.unlink(file.path)
 
-delete_old_genesis_cards()
+delete_old_chicago_cards()
 
 # Setup a file array so we can reference traits
 
@@ -143,7 +138,7 @@ for current_nft in progressbar(total_nfts, "Generating NFTs: ", 40):
     image_path_and_filename = nfts_path + "/" + str(nft_number) + ".png"
     nft_image_resized = nft_image.resize((1024, 1024))
     nft_image_resized.save(image_path_and_filename)
-    create_genesis_card(
+    create_chicago_card(
         nft_image=nft_image,
         ape_number=nft_number,
         score_number=traits["score"],
@@ -158,6 +153,6 @@ for current_nft in progressbar(total_nfts, "Generating NFTs: ", 40):
 
 # Write the manifest
 with open(os.path.join(json_folder_path, season + "_manifest") + ".json", "w") as file:
-    json.dump(manifest, file)
+    json.dump(manifest, file, indent=4)
 
 print("Finished!")

@@ -19,41 +19,57 @@ assets_path = os.path.join(project_base_path, "Assets")
 def getAssetsFontPath(font_name):
     return os.path.join(assets_path, "Fonts", font_name + ".ttf")
 
+
 def getNFTWithPath(nft_number):
-    return os.path.join(ipfs_path, "NFTs", "Genesis", str(nft_number) + ".png")
+    return os.path.join(ipfs_path, "NFTs", "Chicago", str(nft_number) + ".png")
+
 
 # Assets
+
 
 def getAssetsCardPath():
     return os.path.join(assets_path, "Cards")
 
+
 def getAssetsCardRootPath(direction, image_name):
     return os.path.join(getAssetsCardPath(), direction, image_name + ".png")
+
 
 def getAssetsCardFrontPath(image_name):
     return getAssetsCardRootPath("Front", image_name)
 
+
 def getAssetsCardBackPath(image_name):
     return getAssetsCardRootPath("Back", image_name)
 
+
 # IPFS
 
+
 def getIPFSCardsPath(direction):
-    return os.path.join(ipfs_path, "Cards", "Genesis", direction)
+    return os.path.join(ipfs_path, "Cards", "Chicago", direction)
+
 
 def getIPFSCardsFrontPath():
     return getIPFSCardsPath("Front")
 
+
 def getIPFSCardsBackPath():
     return getIPFSCardsPath("Back")
 
+
 # Card Path (Save)
 
+
 def getCardsPath(direction, card_number):
-    return os.path.join(ipfs_path, "Cards", "Genesis", direction, str(card_number) + ".png")
+    return os.path.join(
+        ipfs_path, "Cards", "Chicago", direction, str(card_number) + ".png"
+    )
+
 
 def getCardsFrontPath(card_number):
     return getCardsPath("Front", card_number)
+
 
 def getCardsBackPath(card_number):
     return getCardsPath("Back", card_number)
@@ -112,16 +128,25 @@ def create_card(
 
 
 def card_back(ape_number, background_number):
-    card_base = Image.new("RGBA", card_size, color="#"+background_colours[background_number])
+    card_base = Image.new(
+        "RGBA", card_size, color="#" + background_colours[background_number]
+    )
     border_and_text = Image.open(os.path.join(getAssetsCardBackPath("card_back")))
-    border_nad_text_scalled = ImageOps.scale(border_and_text, assets_scale).resize(card_size)
+    border_nad_text_scalled = ImageOps.scale(border_and_text, assets_scale).resize(
+        card_size
+    )
     card = Image.alpha_composite(card_base, border_nad_text_scalled)
 
     ape_number_card = Image.new("RGBA", card_size, color="black")
     white_background = Image.new("RGBA", card_size, color="white")
     drawable_image = ImageDraw.Draw(ape_number_card)
     _, _, w, h = drawable_image.textbbox((0, 0), str(ape_number), font=typewriter_200)
-    drawable_image.text(((card_size[0]-w)/2, 650), str(ape_number), fill=(35,35,35,255), font=typewriter_200)
+    drawable_image.text(
+        ((card_size[0] - w) / 2, 650),
+        str(ape_number),
+        fill=(35, 35, 35, 255),
+        font=typewriter_200,
+    )
 
     r, g, b, a = ape_number_card.split()
     ape_number_card_recombined = Image.merge("RGBA", (g, g, b, r))
@@ -143,7 +168,9 @@ def card_front(
     mouth_number,
 ):
 
-    card = Image.new("RGB", card_size, color="#" + background_colours[background_number])
+    card = Image.new(
+        "RGB", card_size, color="#" + background_colours[background_number]
+    )
 
     # NFT
 
@@ -218,7 +245,7 @@ def card_front_details(
     drawable_image.text((670, 220), "Unknown", fill=rock_salt_colour, font=rock_salt_70)
 
     # Season
-    drawable_image.text((170, 460), "GENESIS", fill=rock_salt_colour, font=rock_salt_60)
+    drawable_image.text((170, 460), "CHICAGO", fill=rock_salt_colour, font=rock_salt_60)
 
     # Age in Years
     age = randint(18, 50)
