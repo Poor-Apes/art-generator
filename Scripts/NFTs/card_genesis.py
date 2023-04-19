@@ -231,7 +231,7 @@ def card_front_details(
     dob = start_date - full_age
     drawable_image.text(
         (1500, 435),
-        str(dob.day) + "/" + str(dob.month) + "/" + str(dob.year),
+        str(dob.month) + "/" + str(dob.day) + "/" + str(dob.year),
         fill=rock_salt_colour,
         font=rock_salt_70,
     )

@@ -26,9 +26,15 @@ accomodation_type = [
     "Temporary Accommodation",
 ]
 
-accomodation_description = []
+accomodation_description = [
+    "Got kicked out of mums. Cant stay with Dave. Bills away. Where are you going to sleep? Looks like time to unroll old faithful",
+    "Dave your an absolute life saver mate. Yeah ... when are you going to geta a job and stop bumming round peoples couches?",
+    "Thanks Gran & Gramps. When life turns to s#*t they never turn you away. And the price is an easy to swallow repertoire of unlimited stories of how things used to be.",
+    "What is this all youve got? You mean your telling me you have options? Good point. Supose itll have to do",
+    "Ah! Finally made it! No one waking me up at 6am or sticking their toes in my ears at 2am",
+]
 
-accomodation_ipfs_folder = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+accomodation_ipfs_folder = "QmZxVFfSoqTm4VqATf2jG3z7KahyGc4RT6zksSAS1csW9n"
 
 skills = ["Street Smarts", "OG", "survival", "Graft", "Cunning"]
 

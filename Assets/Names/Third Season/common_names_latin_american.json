@@ -1,0 +1,47 @@
+{
+  "male_first_names": [
+    "Jose",
+    "Juan",
+    "Angel",
+    "Carlos",
+    "Javier",
+    "Pedro",
+    "Luis",
+    "Miguel",
+    "Mario",
+    "Hector",
+    "Santiago",
+    "Diego",
+    "Jesus",
+    "Adrian",
+    "Alejandro",
+    "Ruben",
+    "Ricardo",
+    "Victor",
+    "Andres",
+    "Emmanuel"
+  ],
+  "male_surnames": [
+    "Garcia",
+    "Rodriguez",
+    "Martinez",
+    "Hernandez",
+    "Lopez",
+    "Gonzalez",
+    "Perez",
+    "Sanchez",
+    "Rivera",
+    "Torres",
+    "Ramirez",
+    "Reyes",
+    "Ortiz",
+    "Diaz",
+    "Cruz",
+    "Ramos",
+    "Vega",
+    "Morales",
+    "Gomez",
+    "Castillo"
+  ]
+}
+

@@ -1,15 +1,15 @@
 #!python
 
-from card_genesis import create_card as create_genesis_card
-from card_genesis import delete_old_cards as delete_old_genesis_cards
-from progress_bar import progressbar
-from dotenv import load_dotenv
-from PIL import Image
-import random
+import os
+import sys
 import time
 import json
-import sys
-import os
+import random
+from PIL import Image
+from dotenv import load_dotenv
+from progress_bar import progressbar
+from card_genesis import create_card as create_genesis_card
+from card_genesis import delete_old_cards as delete_old_genesis_cards
 
 load_dotenv()
 
@@ -49,17 +49,17 @@ item_range = []
 items = []
 
 if season == "genesis":
-    number_of_nfts = 700
+    number_of_nfts = 1400
     item_range = [x for x in range(0, 4)]
     nfts_path = os.path.join(ipfs_folder_path, os.path.join("NFTs", "Genesis"))
     json_files_path = os.path.join(json_folder_path, os.path.join("Genesis"))
 elif season == "second_season":
-    number_of_nfts = 2000
+    number_of_nfts = 1800
     item_range = [x for x in range(0, 7)]
     nfts_path = os.path.join(ipfs_folder_path, os.path.join("NFTs", "2nd_Season"))
     json_files_path = os.path.join(json_folder_path, os.path.join("2nd_Season"))
 elif season == "third_season":
-    number_of_nfts = 3000
+    number_of_nfts = 2100
     item_range = [x for x in range(4, 10)]
     nfts_path = os.path.join(ipfs_folder_path, os.path.join("NFTs", "3rd_Season"))
     json_files_path = os.path.join(json_folder_path, os.path.join("3rd_season"))
