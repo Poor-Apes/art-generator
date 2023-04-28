@@ -43,7 +43,7 @@ nfts_attributes = []
 nfts_path = None
 json_files_path = None
 number_of_nfts = 0
-chicago_nfts = 3
+chicago_nfts = 1
 new_york_nfts = 1700
 detroit_nfts = 2000
 item_range = []
@@ -134,6 +134,7 @@ for bg in item_range:
                     nfts_attributes.append([bg, cl, m, e, h])
 
 random.shuffle(nfts_attributes)
+random.shuffle(names)
 
 # Only use the first bunch of NFTs
 

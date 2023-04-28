@@ -1,8 +1,9 @@
 import os
 import datetime
+from math import floor
 from random import randint
 from dotenv import load_dotenv
-from PIL import Image, ImageDraw, ImageFilter, ImageOps
+from PIL import Image, ImageDraw, ImageColor, ImageFilter, ImageOps
 
 from common import *
 
@@ -51,27 +52,39 @@ def card_back(ape_number, background_number):
     card_base = Image.new(
         "RGBA", card_size, color="#" + background_colours[background_number]
     )
-    border_and_text = Image.open(os.path.join(getAssetsCardBackPath("card_back")))
-    border_nad_text_scalled = ImageOps.scale(border_and_text, assets_scale).resize(
-        card_size
-    )
-    card = Image.alpha_composite(card_base, border_nad_text_scalled)
+    border_and_text = Image.open(os.path.join(getAssetsCardBackPath("card_back_1")))
+    border_and_text_scalled = ImageOps.scale(
+        border_and_text, get_asset_scale(border_and_text)
+    ).resize(card_size)
+    card = Image.alpha_composite(card_base, border_and_text_scalled)
 
     ape_number_card = Image.new("RGBA", card_size, color="black")
-    white_background = Image.new("RGBA", card_size, color="white")
+    white_background = Image.new(
+        "RGBA", card_size, color="#" + background_colours_border[background_number]
+    )
     drawable_image = ImageDraw.Draw(ape_number_card)
-    _, _, w, h = drawable_image.textbbox((0, 0), str(ape_number), font=typewriter_200)
+    _, _, w, h = drawable_image.textbbox((0, 0), str(ape_number), font=goldman_font)
+    ape_number_str = "#1234"
     drawable_image.text(
-        ((card_size[0] - w) / 2, 650),
-        str(ape_number),
-        fill=(35, 35, 35, 255),
-        font=typewriter_200,
+        (0, (card_size[1] / 2) - h),
+        ape_number_str,
+        fill=(80, 255, 255, 255),
+        font=goldman_font,
     )
 
     r, g, b, a = ape_number_card.split()
-    ape_number_card_recombined = Image.merge("RGBA", (g, g, b, r))
-    # 6. Paset it onto the card
-    card.paste(white_background, (0, 0), ape_number_card_recombined)
+    ape_number_card_recombined = Image.merge("RGBA", (r, g, b, r))
+    ape_number_card_recombined_rotated = ape_number_card_recombined.rotate(90)
+    # 6. Paste it onto the card
+    card.paste(
+        white_background,
+        (
+            percentageOfCardWidth(42),
+            -percentageOfCardHeight(35)
+            + (len(ape_number_str) * percentageOfCardHeight(5)),
+        ),
+        ape_number_card_recombined_rotated,
+    )
 
     cut_the_corners_off(card)
     card.save(getCardsBackPath(season, ape_number - 1))
@@ -93,10 +106,9 @@ def card_front(
     )
 
     # NFT
+    nft_image_scaled = ImageOps.scale(nft_image, get_nft_scale(nft_image))
 
-    nft_image_scaled = ImageOps.scale(nft_image, nft_scale)
-
-    card.paste(nft_image_scaled, (-80, 0))
+    card.paste(nft_image_scaled, (-percentageOfCardWidth(14), 0))
 
     card_front_add_borders(card)
 
@@ -132,10 +144,12 @@ def card_front(
 
 def card_front_add_borders(card):
     borders = Image.open(getAssetsCardFrontPath("borders"))
-    borders_scaled = ImageOps.scale(borders, assets_scale)
+    borders_scaled = ImageOps.scale(borders, get_border_scale(borders))
 
     borders_alpha = Image.open(getAssetsCardFrontPath("borders_alpha"))
-    borders_alpha_scaled = ImageOps.scale(borders_alpha, assets_scale)
+    borders_alpha_scaled = ImageOps.scale(
+        borders_alpha, get_border_scale(borders_alpha)
+    )
     r, g, b, a = borders_alpha_scaled.split()
     borders_alpha_recombined = Image.merge("RGBA", (r, g, b, r))
 
@@ -229,10 +243,12 @@ def card_front_drop_shadow(card, registration_card):
     blank_slate_drop_shadow = Image.new("RGB", card_size, color="black")
     # 2. Use the reg card commands
     drop_shadow = Image.new("RGBA", registration_card.size, (255,) * 4)
-    drop_shadow_scale = ImageOps.scale(drop_shadow, assets_scale)
+    drop_shadow_scale = ImageOps.scale(drop_shadow, get_asset_scale(drop_shadow))
     drop_shadow_rotate = drop_shadow_scale.rotate(5, resample=3, expand=1)
     # 3. Paste the drop shadow into location
-    blank_slate_drop_shadow.paste(drop_shadow_rotate, (15, 630))
+    blank_slate_drop_shadow.paste(
+        drop_shadow_rotate, (percentageOfCardWidth(2.65), percentageOfCardHeight(66.8))
+    )
     # 4. Do the shadow
     blank_slate_drop_shadow_blur = blank_slate_drop_shadow.filter(
         ImageFilter.GaussianBlur(15)
@@ -245,20 +261,26 @@ def card_front_drop_shadow(card, registration_card):
 
 
 def card_front_reg_card_colour_and_alpha(registration_card):
-    reg_card_scaled = ImageOps.scale(registration_card, assets_scale)
+    reg_card_scaled = ImageOps.scale(
+        registration_card, get_asset_scale(registration_card)
+    )
     reg_card_rotated = reg_card_scaled.rotate(
         5, resample=3, expand=1, fillcolor="#fdfbc0"
     )
     alpha = Image.new("RGBA", registration_card.size, (255,) * 4)
-    alpha_scale = ImageOps.scale(alpha, assets_scale)
+    alpha_scale = ImageOps.scale(alpha, get_asset_scale(alpha))
     alpha_rotate = alpha_scale.rotate(5, resample=3, expand=1)
     # 1. Create a blank slate the same size as the card
     blank_slate_colour = Image.new("RGB", card_size, color="black")
     blank_slate_alpha = Image.new("RGB", card_size, color="black")
     # 2. Paste and move the card on the blank slate
-    blank_slate_colour.paste(reg_card_rotated, (15, 630))
+    blank_slate_colour.paste(
+        reg_card_rotated, (percentageOfCardWidth(2.65), percentageOfCardHeight(66.8))
+    )
     # 3. Paste and move the alpha box on the blank slate
-    blank_slate_alpha.paste(alpha_rotate, (15, 630))
+    blank_slate_alpha.paste(
+        alpha_rotate, (percentageOfCardWidth(2.65), percentageOfCardHeight(66.8))
+    )
     # 4. smooth the alpha edges
     blank_slate_alpha_blur = blank_slate_alpha.filter(ImageFilter.BoxBlur(3)).filter(
         ImageFilter.UnsharpMask(radius=20, percent=500, threshold=12)
@@ -273,7 +295,9 @@ def card_front_reg_card_colour_and_alpha(registration_card):
 def cut_the_corners_off(card):
     corners_colour = Image.new("RGB", card_size, color="black")
     corners_alpha = Image.open(os.path.join(getAssetsCardPath(), "corners_alpha.png"))
-    corners_alpha_scaled = ImageOps.scale(corners_alpha, assets_scale).resize(card_size)
+    corners_alpha_scaled = ImageOps.scale(
+        corners_alpha, get_asset_scale(corners_alpha)
+    ).resize(card_size)
     r, g, b, a = corners_alpha_scaled.split()
     corners_alpha_recombined = Image.merge("RGBA", (r, g, b, r))
 
